@@ -1,18 +1,13 @@
-const player1 = {
-    NOME: "Mario",
-    VELOCIDADE : 4,
-    MANOBRABILIDADE: 3,
-    PODER: 3,
-    PONTOS: 0,
-}
+import inquirer from 'inquirer';
 
-const player2 = {
-    NOME: "Luigi",
-    VELOCIDADE : 3,
-    MANOBRABILIDADE: 4,
-    PODER: 4,
-    PONTOS: 0,
-}
+const personagens = [
+    { NOME: "Mario", VELOCIDADE: 4, MANOBRABILIDADE: 3, PODER: 3, PONTOS: 0 },
+    { NOME: "Luigi", VELOCIDADE: 5, MANOBRABILIDADE: 4, PODER: 2, PONTOS: 0 },
+    { NOME: "Peach", VELOCIDADE: 3, MANOBRABILIDADE: 4, PODER: 2, PONTOS: 0 },
+    { NOME: "Bowser", VELOCIDADE: 5, MANOBRABILIDADE: 2, PODER: 5, PONTOS: 0 },
+    { NOME: "Yoshi", VELOCIDADE: 2, MANOBRABILIDADE: 4, PODER: 3, PONTOS: 0 },
+    { NOME: "Donkey Kong", VELOCIDADE: 2, MANOBRABILIDADE: 2, PODER: 5, PONTOS: 0 },
+];
 
 async function rollDice() {
     return Math.floor(Math.random() * 6) + 1;
@@ -119,13 +114,36 @@ async function declareWinner(character1, character2) {
         console.log(`\n${character1.NOME} venceu a corrida! Parabéns! 🏆`);
     else if(character2.PONTOS > character1.PONTOS) 
         console.log(`\n${character2.NOME} venceu a corrida! Parabéns! 🏆`);
-    else console.log(`\nA corrida terminou em empate!`);    
+    else console.log(`\nA corrida terminou em empate!`);
+    
+    console.log("\nObrigado por jogar! Até a próxima! 👋");
 }
 
-(async function main() {
-    console.log(`🏁🚨 Corrida entre ${player1.NOME} e ${player2.NOME} começando ... \n`);
+async function main() {
+    const respostas = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'player1',
+            message: 'Escolha o primeiro personagem:',
+            choices: personagens.map(p => p.NOME),
+        },
+        {
+            type: 'list',
+            name: 'player2',
+            message: 'Escolha o segundo personagem:',
+            choices: personagens.map(p => p.NOME),
+        }
+    ]);
+
+    const player1 = personagens.find(p => p.NOME === respostas.player1);
+    const player2 = personagens.find(p => p.NOME === respostas.player2);
+
+    console.log(`\n🏁🚨 Corrida entre ${player1.NOME} e ${player2.NOME} começando ... \n`);
 
     await playRaceEngine(player1, player2);
     await declareWinner(player1, player2);
-})()
 
+    process.exit(0);
+}
+
+main();

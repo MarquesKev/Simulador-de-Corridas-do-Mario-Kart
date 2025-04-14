@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "projeto-1",
   "version": "1.0.0",
   "main": "index.js",
@@ -8,5 +9,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "inquirer": "^12.5.2"
+  }  
 }
