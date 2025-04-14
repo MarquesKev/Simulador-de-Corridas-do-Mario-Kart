@@ -36,8 +36,16 @@ async function logRollResult(characterName, block, diceResult, attribute) {
     console.log(`${characterName} 🎲 rolou um dado de ${block} ${diceResult} + ${attribute} = ${diceResult + attribute}`);
 }
 
+function penalty() {
+    return Math.random() < 0.5 ? "CASCO 🐢" : "BOMBA 💣";
+}
+
+function turbo() {
+    return Math.random() < 0.3 ? 1 : 0;
+}
+
 async function playRaceEngine(character1, character2) {
-    for(let round = 1; round <= 5; round++) {
+    for(let round = 1; round <= 10; round++) {
         console.log(`🏁 Rodada ${round}`);
 
         // sortear bloco
@@ -78,13 +86,35 @@ async function playRaceEngine(character1, character2) {
             await logRollResult(character2.NOME, "poder", diceResult2, character2.PODER);
 
             if(powerResult1 > powerResult2 && character2.PONTOS > 0) {
-                console.log(`${character1.NOME} venceu o confronto! ${character2.NOME} perdeu 1 ponto! 🐢`);
-                character2.PONTOS--;
+                console.log(`${character1.NOME} venceu o confronto! e ganhou 1 ponto!`);
+                character1.PONTOS++;
+                
+                let penalizacao = penalty();
+                let penalizacaoValor = penalizacao === "CASCO 🐢" ? 1 : 2;
+                console.log(`${character2.NOME} recebeu um ${penalizacao} e perdeu ${penalizacaoValor} ponto(s)!`);
+                character2.PONTOS = Math.max(0, character2.PONTOS - penalizacaoValor);
+
+                let ganharTurbo = turbo();
+                if(ganharTurbo) {
+                    console.log(`${character1.NOME} ganhou um TURBO e ganhou +1 ponto extra! 🍄`);
+                    character1.PONTOS++;
+                }
             }
             
             if(powerResult2 > powerResult1 && character1.PONTOS > 0) {
-                console.log(`${character2.NOME} venceu o confronto! ${character1.NOME} perdeu 1 ponto! 🐢`);
-                character1.PONTOS--;
+                console.log(`${character2.NOME} venceu o confronto! e ganhou 1 ponto!`);
+                character2.PONTOS++;
+                
+                let penalizacao = penalty();
+                let penalizacaoValor = penalizacao === "CASCO 🐢" ? 1 : 2;
+                console.log(`${character1.NOME} recebeu um ${penalizacao} e perdeu ${penalizacaoValor} ponto(s)!`);
+                character1.PONTOS = Math.max(0, character1.PONTOS - penalizacaoValor);
+
+                let ganharTurbo = turbo();
+                if(ganharTurbo) {
+                    console.log(`${character2.NOME} ganhou um TURBO e ganhou +1 ponto extra! 🍄`);
+                    character2.PONTOS++;
+                }
             }
 
             console.log(powerResult1 === powerResult2 ? "Empate no confronto!" : "");
@@ -142,8 +172,6 @@ async function main() {
 
     await playRaceEngine(player1, player2);
     await declareWinner(player1, player2);
-
-    process.exit(0);
 }
 
 main();
