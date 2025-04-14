@@ -1,4 +1,5 @@
 import inquirer from 'inquirer';
+import readline from 'readline';
 
 const personagens = [
     { NOME: "Mario", VELOCIDADE: 4, MANOBRABILIDADE: 3, PODER: 3, PONTOS: 0 },
@@ -8,6 +9,24 @@ const personagens = [
     { NOME: "Yoshi", VELOCIDADE: 2, MANOBRABILIDADE: 4, PODER: 3, PONTOS: 0 },
     { NOME: "Donkey Kong", VELOCIDADE: 2, MANOBRABILIDADE: 2, PODER: 5, PONTOS: 0 },
 ];
+
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+});
+
+async function waitForUserInput() {
+    return new Promise(resolve => {
+        rl.question("\nPressione qualquer tecla para a próxima rodada...");
+        process.stdin.setRawMode(true);
+        process.stdin.resume();
+        process.stdin.once("data", () => {
+            process.stdin.setRawMode(false);
+            // process.stdin.pause();
+            resolve();
+        });
+    });
+};
 
 async function rollDice() {
     return Math.floor(Math.random() * 6) + 1;
@@ -46,6 +65,10 @@ function turbo() {
 
 async function playRaceEngine(character1, character2) {
     for(let round = 1; round <= 10; round++) {
+        console.log("Pressione qualquer tecla para a próxima rodada...\n");
+        
+        await waitForUserInput();
+        
         console.log(`🏁 Rodada ${round}`);
 
         // sortear bloco
@@ -133,6 +156,8 @@ async function playRaceEngine(character1, character2) {
 
         console.log("-------------------------------------------------------------\n");
     }
+
+    rl.close();
 }
 
 async function declareWinner(character1, character2) {
